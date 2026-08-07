@@ -5,8 +5,19 @@ analysis to inform a downstream classification module — it does not itself cha
 `nsw-ingestion` (per its non-goal of classifying leads, see `SPEC.md` §7).
 
 Data snapshot at time of writing: 401,023 DA records (fully synced to 2026-06-27) and
-~139k CDC records (synced to 2025-02-28, still catching up). Numbers below will shift
-slightly as CDC finishes backfilling, but the shape of the findings should hold.
+~223k CDC records (still catching up — CDC sync progressed from ~139k to ~223k rows over
+the course of this analysis). Numbers below will shift further as CDC finishes
+backfilling, but the shape of the findings should hold.
+
+**Note:** this document was written and then reconciled against a separate,
+concurrently-committed change to `SPEC.md` (`0cafce0`) that reached a materially
+different conclusion — that DA has no dedicated pool tag at all, only the coarse
+`Pools / decks / fencing` bucket. That conclusion was based on data that hadn't yet
+picked up DA's post-2023 taxonomy change; re-querying confirms DA **does** have a
+dedicated `Swimming pool` tag (10,921 records, 2023 onward), mirroring the same
+pre-/post-2023 split CDC shows. `SPEC.md` has been corrected to match. The
+`Portable swimming pools and spas and child-resistant barriers` CDC tag (607 records)
+that the other change surfaced is folded into the filters below.
 
 ## 1. Headline finding: SPEC.md's development-type taxonomy is outdated
 
@@ -19,8 +30,9 @@ taxonomy mid-2023 to split combined tags into granular ones. Live data now conta
 |---|---|---|---|
 | `Pools / decks / fencing` | DA | ~2019–2023 (dies off after 2023) | 27,891 |
 | `Swimming pool` | DA | 2023–present | 10,921 |
-| `Swimming pools` (plural) | CDC | ~2019–2023 | ~11,700 |
-| `Swimming pool` (singular) | CDC | 2023–present | ~8,900 |
+| `Swimming pools` (plural) | CDC | ~2019–2023 | 17,342 |
+| `Swimming pool` (singular) | CDC | 2023–present | 13,927 |
+| `Portable swimming pools and spas and child-resistant barriers` | CDC | throughout | 607 |
 
 Confirmed via `lodgement_date` year breakdown (query in Appendix) and confirmed this is a
 taxonomy transition, not a council split — 123 of 125 councils that ever used
@@ -108,7 +120,10 @@ a pool installer directly). Checking co-occurring tags:
 ## 6. Recommended composite filter
 
 ```sql
-development_types && ARRAY['Pools / decks / fencing', 'Swimming pool', 'Swimming pools']
+development_types && ARRAY[
+  'Pools / decks / fencing', 'Swimming pool', 'Swimming pools',
+  'Portable swimming pools and spas and child-resistant barriers'
+]
 AND application_type NOT IN (
   'Modification Application',
   'Modification to Complying Development Certificate',
@@ -124,9 +139,12 @@ AND NOT (development_types && ARRAY[
 ])
 ```
 
-Current yield against synced data: **21,948 DA + 15,917 CDC = 37,865 candidate records**
-statewide since ~2019. Tightening further to exclude new-build bundles (§5) gives
-**20,497 DA + 15,520 CDC = 36,017** — the recommended "homeowner retrofit" segment.
+Current yield against synced data: **22,086 DA + 22,935 CDC = 45,021 candidate records**
+statewide since ~2019 (CDC's share is still climbing as its backfill continues — rerun
+this query once `nsw_ingestion_sync_state` shows CDC caught up). §5's new-build-bundle
+exclusion narrows this further to a "homeowner retrofit" segment; re-run that query
+against current data before relying on an exact number, since it was measured before
+CDC's sync had reached its current row count.
 
 None of this is a precise pool-installation signal (per SPEC.md §2.4, there's no free-text
 description field in either API) — it's a best-effort coarse filter. Expect meaningful
