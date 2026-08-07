@@ -1,0 +1,103 @@
+{
+	"info": {
+		"_postman_id": "02f0ff11-dc05-4df2-aaab-fd473255c521",
+		"name": "Swithboard_Data_Apis_PROD Copy 5",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "OnlineDA",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "PageSize",
+						"value": "5",
+						"type": "text"
+					},
+					{
+						"key": "PageNumber",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "filters",
+						"value": "{ \"filters\": {  } }",
+						"type": "text"
+					},
+					{
+						"key": "filters",
+						"value": "{ \"filters\": { \"CouncilName\": [\"ALBURY CITY COUNCIL\", \"THE HILLS SHIRE COUNCIL\", \n\"PENRITH CITY COUNCIL\", \"SUTHERLAND SHIRE COUNCIL\"], \"ApplicationLastUpdatedFrom\": \"2019-02-01\"} }",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://api.apps1.nsw.gov.au/eplanning/data/v0/OnlineDA",
+					"protocol": "https",
+					"host": [
+						"api",
+						"apps1",
+						"nsw",
+						"gov",
+						"au"
+					],
+					"path": [
+						"eplanning",
+						"data",
+						"v0",
+						"OnlineDA"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "OnlineCDC",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "PageSize",
+						"value": "5",
+						"type": "text"
+					},
+					{
+						"key": "PageNumber",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "filters",
+						"value": "{ \"filters\": {  } }",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://api.apps1.nsw.gov.au/eplanning/data/v0/OnlineCDC",
+					"protocol": "https",
+					"host": [
+						"api",
+						"apps1",
+						"nsw",
+						"gov",
+						"au"
+					],
+					"path": [
+						"eplanning",
+						"data",
+						"v0",
+						"OnlineCDC"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
