@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: localpassword
       POSTGRES_DB: council_leads
     ports:
-      - "5433:5433"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
