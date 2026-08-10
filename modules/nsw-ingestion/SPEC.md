@@ -137,9 +137,10 @@ Reliability: retry with backoff on non-2xx responses or timeouts (NSW publishes 
 
 Other modules must not query `nsw_applications`/`nsw_ingestion_sync_state` directly. `nsw-ingestion` exposes a small typed query API, e.g.:
 
-- `listApplications(filter: { developmentTypes?, councilName?, updatedSince?, ... })`
+- `listApplications(filter: { developmentTypes?, councilName?, updatedSince?, lodgementDateFrom?, lodgementDateTo?, boundingBox?, ... })` — `boundingBox` is a coarse lat/lon pre-filter (`{ minLat, maxLat, minLon, maxLon }`); callers needing precise radius filtering (e.g. great-circle distance) do that math themselves on the returned rows.
 - `getApplicationByPan(pan: string)`
 - `listDevelopmentTypes()` — distinct `development_types` tags currently present, sorted. Useful for discovering the real taxonomy (§2.3) rather than hardcoding it downstream.
+- `listSuburbCentroids(filter: { source?, developmentTypes? })` — mean lat/lon per suburb over matching rows, for building location pickers. Generic: takes tags/source as input rather than hardcoding any domain meaning (e.g. "pool") here.
 
 This keeps the ingestion module as the sole owner of its schema and lets it evolve the storage shape without breaking consumers, per the "no domain logic bleed between modules" rule in `CLAUDE.md`.
 
